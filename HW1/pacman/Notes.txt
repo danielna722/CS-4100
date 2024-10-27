@@ -1,0 +1,37 @@
+'''
+
+Table
+
+Your reported values are nearly correct.  Nodes
+explored seems too small by 1.
+
+
+Your BFS seems to nearly double the count of nodes explored!
+
+Your report of optimality is a bit confused.  BFS always guarntees
+optimality and is marekdly less than DFS, except for bigMaze.  Note
+that the DFS does find the optimal solution, but it's not generally
+guaranteed.
+
+Code
+
+You were not quite able to correctly generalize BFS and DFS, and have
+uninformedSEarch implement both.  This can also be handled by passing
+a flag parameter that uses a conditional to select the appropriate
+data structure. (-5)
+
+Code is well commented.
+Your lines are rather long!
+
+Should use dictionary for explored nodes, not a list.
+
+My comments are marked XX in your code.
+
+
+Code	88/90
+Table   10/10
+
+Score:  98/100
+
+
+'''
