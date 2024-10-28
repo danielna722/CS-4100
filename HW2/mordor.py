@@ -125,7 +125,11 @@ The heatmap should be a 4x4 grid, corresponding to our map of Mordor. Please use
 
 '''
 
-
+def valid_action(observation, action):
+    for i in range(nS):
+        if P[i, observation, action] > 0:
+            return True
+    return False
 
 def q_learning(num_episodes, checkpoints, gamma=0.9, epsilon=0.9):
     """
@@ -159,9 +163,43 @@ def q_learning(num_episodes, checkpoints, gamma=0.9, epsilon=0.9):
 
 
     '''
+    state = 0
+    action = None
+    # epsilon = randomly pick a move (exploration)
+    # 1 - epsilon = choose optimal (exploitation)
 
+    for i in tqdm(range(num_episodes)):
+        observation, info = env.reset() # reset the env every episode
+        while True:
+            #choose random move
+            if epsilon > np.random.rand():
+                action = np.random.randint(nA)
+                while not valid_action(observation, action):
+                    action = np.random.randint(nA)
+            else:   #choose optimal
+                action = np.argmax(Q[observation])
+                while not valid_action(observation, action):
+                    action = np.random.randint(nA)
+            
+            new_observation, reward, terminated, truncated, info = env.step(action)
+            num_updates[observation, action] += 1
 
+            a = 1 / num_updates[observation, action]
 
+            Q[observation, action] = Q[observation, action] + a * (reward + gamma * np.max(Q[new_observation]) - Q[observation, action])
+
+            observation = new_observation
+
+            if terminated:
+                break
+
+        epsilon = epsilon * 0.9999
+
+        if i + 1 in checkpoints:
+            V_opt_checkpoint_values.append(np.max(Q, axis=1))
+        
+        
+    optimal_policy = np.argmax(Q, axis=1)
     return Q, optimal_policy, V_opt_checkpoint_values
 
 
@@ -190,6 +228,15 @@ def plot_heatmaps(V_opt, filename):
 
 
     '''
+    grid = V_opt.reshape(4, 4)
+    plt.figure(figsize=(6, 4))
+    plt.imshow(grid, cmap="hot", interpolation= "nearest")
+    plt.colorbar()
+    plt.title("Heatmap")
+    plt.xlabel("Column")
+    plt.ylabel("Row")
+    plt.savefig(filename)
+    plt.close()
 
 
 '''
